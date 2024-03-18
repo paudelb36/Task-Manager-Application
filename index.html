@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Task Manager Application</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Task Manager Application</h1>
+      <div class="content-wrapper">
+        <!-- <button id="add-task-button">Add Task</button> -->
+
+        <div id="task-form">
+          <h2>Add Task</h2>
+          <form id="add-task-form" action="">
+            <input type="text" id="title" placeholder="Title" required /><br />
+            <textarea
+              id="description"
+              placeholder="Description"
+              cols="30"
+              rows="10"
+            ></textarea
+            ><br />
+            <div class="flexBox">
+              <input type="date" id="deadline" required /><br />
+              <input type="time" id="time" /> <br />
+            </div>
+
+            <select id="priority">
+              <option value="" selected disabled>Select Priority</option>
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option></select
+            ><br />
+            <select id="category">
+              <option value="" selected disabled>Select Category</option>
+              <option value="school">School</option>
+              <option value="personal">Personal</option>
+              <option value="work">Work</option></select
+            ><br />
+            <button type="submit" onclick="addTask()">Add Task</button>
+          </form>
+        </div>
+        <div id="task-list">
+          <h2>Task List</h2>
+          <div class="flexBox">
+            <p>Total Tasks : <span id="totalTasks">0</span></p>
+            <p>Completed Tasks : <span id="completedTasks">0</span></p>
+          </div>
+          <!-- Inside the task list -->
+          <!-- Updated HTML -->
+          <ul id="tasks">
+            <!-- Each task will be represented as a list item -->
+            <li class="task">
+              <!-- Container for task title and buttons -->
+              <div class="task-header">
+                <!-- Initially show only the task title -->
+                <h3 class="task-title">Task Title</h3>
+                <!-- Button to toggle completion status -->
+                <button class="complete-btn" style="display: none">Complete</button>
+                <!-- Buttons container -->
+                <div class="task-buttons">
+                    
+                  <!-- Button to toggle details visibility -->
+                  <button class="view-details-btn">View Details</button>
+                  <!-- Buttons for actions -->
+                  <button class="edit-btn" onclick="editTask()">Edit</button>
+                  <button class="delete-btn" onclick="deleteTask()">
+                    Delete
+                  </button>
+                </div>
+              </div>
+              <!-- Task details (hidden by default) -->
+              <div class="task-details" style="display: none">
+                <p>
+                  Description:
+                  <span class="task-description">Task Description</span>
+                </p>
+                <p>
+                  Deadline: <span class="task-deadline">Task Deadline</span>
+                </p>
+                <p>Time: <span class="task-time">Task Time</span></p>
+                <p>
+                  Priority: <span class="task-priority">Task Priority</span>
+                </p>
+                <p>
+                  Category: <span class="task-category">Task Category</span>
+                </p>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
