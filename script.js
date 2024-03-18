@@ -1,6 +1,40 @@
+document.addEventListener('DOMContentLoaded', function() {
 var tasks = [];
+var editIndex = -1;
 
-//function to add task
+// Function to save tasks data to local storage
+function saveTasksToLocalStorage() {
+  localStorage.setItem('tasks', JSON.stringify(tasks));
+}
+
+// Function to load tasks data from local storage
+function loadTasksFromLocalStorage() {
+  var storedTasks = localStorage.getItem('tasks');
+  if (storedTasks) {
+    tasks = JSON.parse(storedTasks);
+    updateTodoList(); // Update the task list after loading tasks
+  }
+}
+
+// Call loadTasksFromLocalStorage when the page loads
+loadTasksFromLocalStorage();
+
+// Add event listeners after DOM content is loaded
+document.getElementById('open-popup-btn').addEventListener('click', openPopup);
+document.querySelector('.close-btn').addEventListener('click', closePopup);
+document.getElementById('add-task-form').addEventListener('submit', function(event) {
+    event.preventDefault(); // Prevent form submission
+    addTask(); // Call addTask function to handle form submission
+});
+
+// Add event listeners for filter options
+document.getElementById('deadline-filter').addEventListener('input', filterTasks);
+document.getElementById('priority-filter').addEventListener('change', filterTasks);
+document.getElementById('category-filter').addEventListener('change', filterTasks);
+
+
+
+// Function to add task
 function addTask() {
   // Retrieve input values
   var title = document.getElementById("title").value.trim();
@@ -21,16 +55,32 @@ function addTask() {
     alert("Please fill in all fields.");
     return;
   }
-  // Add task to the tasks array
-  tasks.push({
-    title: title,
-    description: description,
-    deadline: deadline,
-    time: time,
-    priority: priority,
-    category: category,
-    completed: false,
-  });
+
+  // Check if in edit mode
+  if (editIndex !== -1) {
+    // Update existing task
+    tasks[editIndex] = {
+      title: title,
+      description: description,
+      deadline: deadline,
+      time: time,
+      priority: priority,
+      category: category,
+      completed: tasks[editIndex].completed, // Keep the completed status unchanged
+    };
+    editIndex = -1; // Reset editIndex
+  } else {
+    // Add task to the tasks array
+    tasks.push({
+      title: title,
+      description: description,
+      deadline: deadline,
+      time: time,
+      priority: priority,
+      category: category,
+      completed: false,
+    });
+  }
 
   // Clear input fields
   document.getElementById('title').value = "";
@@ -40,19 +90,35 @@ function addTask() {
   document.getElementById('priority').value = "";
   document.getElementById('category').value = "";
 
+  // Show the task buttons
+  var taskButtons = document.querySelector('.task-buttons');
+  if (taskButtons) {
+      taskButtons.style.display = 'block';
+  }
+
   // Update the task list
   updateTodoList();
-  
+
+  // Save tasks to localStorage
+  saveTasksToLocalStorage();
 }
 
+// Function to toggle task completion status
+function toggleCompleted(index) {
+  tasks[index].completed = !tasks[index].completed;
+  updateTodoList();
+
+  // Save tasks to localStorage
+  saveTasksToLocalStorage();
+}
 
 // Function to update the task list
-function updateTodoList() {
+function updateTodoList(filteredTasks = tasks) {
   var todoList = document.getElementById('tasks');
   todoList.innerHTML = ""; // Clear existing tasks
 
   // Add each task to the list
-  tasks.forEach(function(task, index) {
+  filteredTasks.forEach(function(task, index) {
     var listItem = document.createElement('li');
     listItem.classList.add('task');
 
@@ -64,6 +130,9 @@ function updateTodoList() {
     var titleHeading = document.createElement('h3');
     titleHeading.classList.add('task-title');
     titleHeading.textContent = task.title;
+    if (task.completed) {
+      titleHeading.classList.add('completed'); // Add completed class if task is completed
+    }
     taskHeader.appendChild(titleHeading);
 
     // Buttons container
@@ -78,6 +147,15 @@ function updateTodoList() {
       toggleDetails(index);
     };
     taskButtons.appendChild(viewDetailsBtn);
+
+    // Button to toggle completion status
+    var completeBtn = document.createElement('button');
+    completeBtn.classList.add('complete-btn');
+    completeBtn.textContent = 'Complete';
+    completeBtn.onclick = function() {
+      toggleCompleted(index);
+    };
+    taskButtons.appendChild(completeBtn);
 
     // Edit button
     var editBtn = document.createElement('button');
@@ -117,7 +195,7 @@ function updateTodoList() {
   });
 
   // Update aggregate task counts
-  updateAggregate();
+  updateAggregate(filteredTasks);
 }
 
 
@@ -133,39 +211,36 @@ function toggleDetails(index) {
 
 // Function to delete a task
 function deleteTask(index) {
-
   var confirmDelete = confirm("Are you sure you want to delete this task?")
-
   if(confirmDelete){
     tasks.splice(index, 1); // Remove the task from the tasks array
     updateTodoList(); // Update the task list
   }
-  
+  // Save tasks to localStorage
+  saveTasksToLocalStorage();
 }
 
 // Function to edit a task
 function editTask(index) {
   var task = tasks[index]; // Get the task object at the specified index
 
-    // Populate form fields with existing task details
-    document.getElementById('title').value = task.title;
-    document.getElementById('description').value = task.description;
-    document.getElementById('deadline').value = task.deadline;
-    document.getElementById('time').value = task.time;
-    document.getElementById('priority').value = task.priority;
-    document.getElementById('category').value = task.category;
+  // Populate form fields with existing task details
+  document.getElementById('title').value = task.title;
+  document.getElementById('description').value = task.description;
+  document.getElementById('deadline').value = task.deadline;
+  document.getElementById('time').value = task.time;
+  document.getElementById('priority').value = task.priority;
+  document.getElementById('category').value = task.category;
 
-    // Remove the task from the tasks array
-    tasks.splice(index, 1);
+  // Store the index of the task being edited
+  editIndex = index;
 
-    // Update the task list
-    updateTodoList();
-}
+  // Change submit button to "Edit"
+  document.getElementById('submit-button').textContent = 'Edit';
+  openPopup();
 
-// Function to toggle task completion status
-function toggleCompleted(task) {
-  task.completed = !task.completed;
-  updateTodoList();
+  // Save tasks to localStorage
+  saveTasksToLocalStorage();
 }
 
 // Function to update aggregate task counts
@@ -182,3 +257,33 @@ function updateAggregate() {
   }).length;
   completedTasks.textContent = completedCount;
 }
+
+// Function to open the popup form
+function openPopup() {
+  document.getElementById('popup-form').style.display = 'block';
+}
+
+// Function to close the popup form
+function closePopup() {
+  document.getElementById('popup-form').style.display = 'none';
+}
+
+// Function to filter tasks based on criteria
+function filterTasks() {
+    var deadlineFilter = document.getElementById('deadline-filter').value.trim().toLowerCase();
+    var priorityFilter = document.getElementById('priority-filter').value.trim().toLowerCase();
+    var categoryFilter = document.getElementById('category-filter').value.trim().toLowerCase();
+
+    var filteredTasks = tasks.filter(function(task) {
+        var deadlineMatch = task.deadline.toLowerCase().includes(deadlineFilter) || deadlineFilter === '';
+        var priorityMatch = task.priority.toLowerCase() === priorityFilter || priorityFilter === 'all';
+        var categoryMatch = task.category.toLowerCase() === categoryFilter || categoryFilter === 'all';
+
+        return deadlineMatch && priorityMatch && categoryMatch;
+    });
+
+    updateTodoList(filteredTasks);
+}
+
+});
+
