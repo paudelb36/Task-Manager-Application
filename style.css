@@ -16,7 +16,7 @@ body {
 .container {
   max-width: 800px;
   margin: 50px auto;
-  padding: 20px;
+  padding: 40px;
   background-color: #ffffff80;
   border-radius: 8px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -28,7 +28,7 @@ body {
 
 h1, h2 {
   text-align: center;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 }
 
 #task-form {
@@ -266,7 +266,7 @@ task-header {
 
 /* Filter options */
 .add-search {
-  margin-bottom: 20px; /* Add some space between Add Task button and filters */
+  margin-bottom: 15px; /* Add some space between Add Task button and filters */
 }
 
 .add-search label {
@@ -274,10 +274,25 @@ task-header {
 }
 
 .add-search input[type="date"],
-.add-search select {
-  padding: 8px; /* Adjust padding for consistency */
-  margin-bottom: 10px;
+.add-search select,
+#name-filter {
+  width: calc(24% - 5px);
+  padding: 10px; /* Adjust padding for consistency */
+  margin-bottom: 8px;
   border: 1px solid #ccc;
   border-radius: 5px;
   box-sizing: border-box;
+  display: inline-block;
+  margin-right: 5px; /* Add margin between inputs */
+}
+
+.created p{
+  margin: 0;
+}
+.created a {
+  color: #c82333;
+  text-decoration: none;
+}
+.created a:hover{
+  text-decoration: underline;
 }

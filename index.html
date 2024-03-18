@@ -16,7 +16,9 @@
         <br /><br />
 
         <!-- Filter options -->
-        <label >Sort by</label><br />
+
+        <label >Filter</label><br />
+        <input type="text" id="name-filter" placeholder="Search">
         <input
           type="date"
           id="deadline-filter"
@@ -39,10 +41,12 @@
         <p>Total Tasks : <span id="totalTasks">0</span></p>
         <p>Completed Tasks : <span id="completedTasks">0</span></p>
       </div>
+
+      <h2>Task List</h2>
       <!-- Inside the task list -->
       <!-- Updated HTML -->
       <ul id="tasks">
-        <h2>Task List</h2>
+        
         <!-- Each task will be represented as a list item -->
         <li class="task">
           <!-- Container for task title and buttons -->
@@ -83,6 +87,9 @@
         </li>
       </ul>
     </div>
+  </div>
+  <div class="created">
+    <p>Developed By :  <a href="https://github.com/paudelb36/">@Bibek Paudel</a></p>
   </div>
   <!-- Popup form -->
   <div id="popup-form" class="popup-form" style="display: none">

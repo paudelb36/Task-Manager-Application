@@ -32,6 +32,16 @@ document.getElementById('deadline-filter').addEventListener('input', filterTasks
 document.getElementById('priority-filter').addEventListener('change', filterTasks);
 document.getElementById('category-filter').addEventListener('change', filterTasks);
 
+// Add event listener for search input
+document.getElementById('name-filter').addEventListener('input', function() {
+  var searchQuery = this.value.trim().toLowerCase();
+  var filteredTasks = tasks.filter(function(task) {
+      return task.title.toLowerCase().includes(searchQuery);
+  });
+  updateTodoList(filteredTasks);
+});
+
+
 
 
 // Function to add task
